@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nono</title>
+    <!-- 引入 Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('https://images.pexels.com/photos/1169754/pexels-photo-1169754.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        h1 {
+            color: #007bff;
+        }
+        .btn-primary, .btn-success, .btn-info, .btn-danger {
+            margin: 5px;
+        }
+        .modal-content {
+            border-radius: 8px;
+        }
+        .list-group-item {
+            border: none;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+        /* From Uiverse.io by ZacharyCrespin */
+        @keyframes square-animation {
+            0% {
+                left: 0;
+                top: 0;
+            }
+            10.5% {
+                left: 0;
+                top: 0;
+            }
+            12.5% {
+                left: 32px;
+                top: 0;
+            }
+            23% {
+                left: 32px;
+                top: 0;
+            }
+            25% {
+                left: 64px;
+                top: 0;
+            }
+            35.5% {
+                left: 64px;
+                top: 0;
+            }
+            37.5% {
+                left: 64px;
+                top: 32px;
+            }
+            48% {
+                left: 64px;
+                top: 32px;
+            }
+            50% {
+                left: 32px;
+                top: 32px;
+            }
+            60.5% {
+                left: 32px;
+                top: 32px;
+            }
+            62.5% {
+                left: 32px;
+                top: 64px;
+            }
+            73% {
+                left: 32px;
+                top: 64px;
+            }
+            75% {
+                left: 0;
+                top: 64px;
+            }
+            85.5% {
+                left: 0;
+                top: 64px;
+            }
+            87.5% {
+                left: 0;
+                top: 32px;
+            }
+            98% {
+                left: 0;
+                top: 32px;
+            }
+            100% {
+                left: 0;
+                top: 0;
+            }
+        }
+
+        .loader {
+            position: fixed;
+            top: 50px; /* Adjusted from 10px to 50px */
+            right: 50px; /* Adjusted from 10px to 50px */
+            width: 96px;
+            height: 96px;
+            transform: rotate(45deg);
+        }
+
+        .loader-square {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 28px;
+            height: 28px;
+            margin: 2px;
+            border-radius: 0px;
+            background: rgb(98, 243, 243);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            animation: square-animation 10s ease-in-out infinite both;
+        }
+
+        .loader-square:nth-of-type(0) {
+            animation-delay: 0s;
+        }
+
+        .loader-square:nth-of-type(1) {
+            animation-delay: -1.4285714286s;
+        }
+
+        .loader-square:nth-of-type(2) {
+            animation-delay: -2.8571428571s;
+        }
+
+        .loader-square:nth-of-type(3) {
+            animation-delay: -4.2857142857s;
+        }
+
+        .loader-square:nth-of-type(4) {
+            animation-delay: -5.7142857143s;
+        }
+
+        .loader-square:nth-of-type(5) {
+            animation-delay: -7.1428571429s;
+        }
+
+        .loader-square:nth-of-type(6) {
+            animation-delay: -8.5714285714s;
+        }
+
+        .loader-square:nth-of-type(7) {
+            animation-delay: -10s;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loader">
+        <div class="loader-square"></div>
+        <div class="loader-square"></div>
+        <div class="loader-square"></div>
+        <div class="loader-square"></div>
+        <div class="loader-square"></div>
+        <div class="loader-square"></div>
+        <div class="loader-square"></div>
+    </div>
+    <div class="container mt-5">
+        <h1 class="text-center">Nono筆記</h1>
+        <div class="text-center my-4">
+            <button id="registerBtn" class="btn btn-primary">註冊</button>
+            <button id="loginBtn" class="btn btn-success">登入</button>
+            <button id="showUserInfoBtn" class="btn btn-info d-none">會員信息</button>
+            <button id="logoutBtn" class="btn btn-danger d-none">登出</button>
+        </div>
+
+        <!-- 用戶資料區 -->
+        <div class="modal fade" id="userInfoModal" tabindex="-1" aria-labelledby="userInfoModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="userInfoModalLabel">會員信息</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img id="modalUserPhoto" src="" alt="用戶���像" class="img-fluid rounded-circle mb-3"
+                            style="width: 100px;">
+                        <h5 id="modalUserName" class="card-title"></h5>
+                        <p id="modalUserEmail" class="card-text"></p>
+                        <p id="modalLastLogin" class="card-text text-muted"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- CRUD 功能區 -->
+        <div id="crudSection" class="mt-5 d-none">
+            <h3>筆記管理</h3>
+            <div class="mb-3">
+                <input id="noteTitle" type="text" class="form-control mb-2" placeholder="標題">
+                <textarea id="noteContent" class="form-control mb-2" placeholder="內容"></textarea>
+                <button id="createNoteBtn" class="btn btn-primary">新增筆記</button>
+            </div>
+            <div class="mb-3">
+                <label for="sortOrder" class="form-label">排序方式</label>
+                <select id="sortOrder" class="form-select">
+                    <option value="asc">升序</option>
+                    <option value="desc">降序</option>
+                </select>
+            </div>
+            <h4>筆記列表</h4>
+            <ul id="notesList" class="list-group"></ul>
+        </div>
+    </div>
+
+    <!-- 模態框 -->
+    <div class="modal fade" id="editNoteModal" tabindex="-1" aria-labelledby="editNoteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editNoteModalLabel">編輯筆記</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editNoteForm">
+                        <div class="mb-3">
+                            <label for="editNoteTitle" class="form-label">標題</label>
+                            <input type="text" id="editNoteTitle" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editNoteContent" class="form-label">內容</label>
+                            <textarea id="editNoteContent" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <input type="hidden" id="editNoteId">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="saveEditBtn">儲存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- 引入 Bootstrap Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Firebase 配置
+            const firebaseConfig = {
+                apiKey: "AIzaSyAScW31exsXbAGyVdPyHkNNTBgEmKv9tKI",
+                authDomain: "nono-4982c.firebaseapp.com",
+                databaseURL: "https://nono-4982c-default-rtdb.asia-southeast1.firebasedatabase.app",
+                projectId: "nono-4982c",
+                storageBucket: "nono-4982c.firebasestorage.app",
+                messagingSenderId: "156227944121",
+                appId: "1:156227944121:web:bc5f1c2d5cd733b023a568",
+                measurementId: "G-M5MS866L9E"
+            };
+
+            // 初始化 Firebase
+            firebase.initializeApp(firebaseConfig);
+
+            const auth = firebase.auth();
+            const database = firebase.database();
+            const provider = new firebase.auth.GoogleAuthProvider();
+
+            let currentUserId = null;
+
+            // 註冊按鈕
+            document.getElementById('registerBtn').addEventListener('click', () => {
+                auth.signInWithPopup(provider)
+                    .then((result) => {
+                        saveUserData(result.user);
+                        showAlert("success", "註冊成功！");
+                    })
+                    .catch((error) => {
+                        showAlert("error", "註冊失敗", error.message);
+                    });
+            });
+
+
+            // 登入按鈕
+            document.getElementById('loginBtn').addEventListener('click', () => {
+                auth.signInWithPopup(provider)
+                    .then((result) => {
+                        checkIfUserExists(result.user);
+                        showAlert("success", "登入成功！");
+                    })
+                    .catch((error) => {
+                        showAlert("error", "登入失敗", error.message);
+                    });
+            });
+
+
+            // 登出按鈕
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                showConfirm("確定登出？", "", () => {
+                    auth.signOut()
+                        .then(() => {
+                            resetUI();
+                            showAlert("success", "登出成功！");
+                        })
+                        .catch((error) => {
+                            showAlert("error", "登出失敗", error.message);
+                        });
+                });
+            });
+
+            document.getElementById('showUserInfoBtn').addEventListener('click', () => {
+                const userInfoModal = new bootstrap.Modal(document.getElementById('userInfoModal'));
+                userInfoModal.show();
+            });
+
+
+            // 保存用戶數據
+            function saveUserData(user) {
+                const userData = {
+                    name: user.displayName,
+                    email: user.email,
+                    photoURL: user.photoURL,
+                    lastLogin: new Date().toISOString()
+                };
+
+                database.ref('users/' + user.uid).set(userData)
+                    .then(() => {
+                        console.log('用戶資料已保存');
+                        displayUserData(userData);
+                        currentUserId = user.uid;
+                        loadNotes();
+                    })
+                    .catch((error) => {
+                        console.error('保存用戶資料失敗：', error);
+                    });
+            }
+
+            // 顯示用戶資料
+            function displayUserData(userData) {
+                // 更新 Modal 内的信息
+                document.getElementById('modalUserPhoto').src = userData.photoURL;
+                document.getElementById('modalUserName').textContent = `姓名：${userData.name}`;
+                document.getElementById('modalUserEmail').textContent = `Email：${userData.email}`;
+                const formattedLastLogin = new Date(userData.lastLogin).toLocaleString('zh-Hant', { timeZone: 'Asia/Taipei' });
+                document.getElementById('modalLastLogin').textContent = `最後登入時間：${formattedLastLogin}`;
+
+                // 顯示按鈕區域
+                document.getElementById('showUserInfoBtn').classList.remove('d-none');
+                document.getElementById('logoutBtn').classList.remove('d-none');
+                document.getElementById('registerBtn').classList.add('d-none');
+                document.getElementById('loginBtn').classList.add('d-none');
+
+                // 顯示 CRUD 區域
+                document.getElementById('crudSection').classList.remove('d-none');
+            }
+
+
+            // 重置 UI
+            function resetUI() {
+                document.getElementById('showUserInfoBtn').classList.add('d-none');
+                document.getElementById('logoutBtn').classList.add('d-none');
+                document.getElementById('crudSection').classList.add('d-none');
+
+                // 顯示註冊與登入按鈕
+                document.getElementById('registerBtn').classList.remove('d-none');
+                document.getElementById('loginBtn').classList.remove('d-none');
+            }
+
+            // 檢查用戶是否存在
+            function checkIfUserExists(user) {
+                database.ref('users/' + user.uid).once('value')
+                    .then((snapshot) => {
+                        if (snapshot.exists()) {
+                            const userData = snapshot.val();
+                            const previousLastLogin = userData.lastLogin;
+                            const currentLastLogin = new Date().toISOString();
+                            database.ref('users/' + user.uid).update({ lastLogin: currentLastLogin })
+                                .then(() => {
+                                    userData.lastLogin = previousLastLogin;
+                                    displayUserData(userData);
+                                    currentUserId = user.uid;
+                                    loadNotes();
+                                });
+                        } else {
+                            saveUserData(user);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('檢查用戶失敗：', error);
+                    });
+            }
+
+            // 加載筆記��表
+            function loadNotes() {
+                const notesList = document.getElementById('notesList');
+                notesList.innerHTML = '';
+
+                const userNotesRef = database.ref(`users/${currentUserId}/notes`);
+                userNotesRef.off();
+
+                userNotesRef.on('value', (snapshot) => {
+                    notesList.innerHTML = '';
+                    const notesArray = [];
+                    snapshot.forEach((childSnapshot) => {
+                        const noteId = childSnapshot.key;
+                        const noteData = childSnapshot.val();
+                        notesArray.push({ noteId, ...noteData });
+                    });
+
+                    const sortOrder = document.getElementById('sortOrder').value;
+                    notesArray.sort((a, b) => {
+                        if (sortOrder === 'asc') {
+                            return a.title.localeCompare(b.title);
+                        } else {
+                            return b.title.localeCompare(a.title);
+                        }
+                    });
+
+                    notesArray.forEach((note) => {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                        const formattedTimestamp = new Date(note.timestamp).toLocaleString();
+                        listItem.innerHTML = `<div>${note.title}: ${note.content}<br><small class="text-muted">儲存時間：${formattedTimestamp}</small></div>`;
+
+                        const buttonsDiv = document.createElement('div');
+
+                        const deleteButton = document.createElement('button');
+                        deleteButton.className = 'btn btn-danger btn-sm ms-2';
+                        deleteButton.textContent = '刪除';
+                        deleteButton.addEventListener('click', () => deleteNote(note.noteId));
+
+                        const updateButton = document.createElement('button');
+                        updateButton.className = 'btn btn-warning btn-sm';
+                        updateButton.textContent = '編輯';
+                        updateButton.addEventListener('click', () => showEditModal(note.noteId, note));
+
+                        buttonsDiv.appendChild(updateButton);
+                        buttonsDiv.appendChild(deleteButton);
+                        listItem.appendChild(buttonsDiv);
+                        notesList.appendChild(listItem);
+                    });
+                });
+            }
+
+            // 監聽排序方式變更
+            document.getElementById('sortOrder').addEventListener('change', loadNotes);
+
+            // 新增筆記
+            document.getElementById('createNoteBtn').addEventListener('click', () => {
+                const title = document.getElementById('noteTitle').value;
+                const content = document.getElementById('noteContent').value;
+
+                if (title && content) {
+                    const noteRef = database.ref(`users/${currentUserId}/notes`).push();
+                    const timestamp = new Date().toISOString();
+                    noteRef.set({ title, content, timestamp })
+                        .then(() => {
+                            document.getElementById('noteTitle').value = '';
+                            document.getElementById('noteContent').value = '';
+                            showAlert("success", "新增筆記成功！");
+                        })
+                        .catch((error) => {
+                            showAlert("error", "新增筆記失敗", error.message);
+                        });
+                } else {
+                    showAlert("warning", "標題與內容不可為空！");
+                }
+            });
+
+
+            // 顯示編輯模態框
+            function showEditModal(noteId, noteData) {
+                const editModal = new bootstrap.Modal(document.getElementById('editNoteModal'));
+                document.getElementById('editNoteTitle').value = noteData.title;
+                document.getElementById('editNoteContent').value = noteData.content;
+                document.getElementById('editNoteId').value = noteId;
+                editModal.show();
+            }
+
+            // 儲存編輯
+            document.getElementById('saveEditBtn').addEventListener('click', () => {
+                const noteId = document.getElementById('editNoteId').value;
+                const title = document.getElementById('editNoteTitle').value;
+                const content = document.getElementById('editNoteContent').value;
+
+                if (noteId && title && content) {
+                    database.ref(`users/${currentUserId}/notes/${noteId}`).update({ title, content })
+                        .then(() => {
+                            showAlert("success", "更新筆記成功！");
+                            const editModal = bootstrap.Modal.getInstance(document.getElementById('editNoteModal'));
+                            editModal.hide();
+                        })
+                        .catch((error) => {
+                            showAlert("error", "更新筆記失敗", error.message);
+                        });
+                } else {
+                    showAlert("warning", "標題與內容不可為空！");
+                }
+            });
+
+
+            // 刪除筆記
+            function deleteNote(noteId) {
+                showConfirm("確定刪除？", "此操作無法恢復", () => {
+                    database.ref(`users/${currentUserId}/notes/${noteId}`).remove()
+                        .then(() => {
+                            showAlert("success", "刪除成功！");
+                        })
+                        .catch((error) => {
+                            showAlert("error", "刪除失敗", error.message);
+                        });
+                });
+            }
+
+
+            // SweetAlert2 通用彈窗
+            const showAlert = (icon, title, text = "") => {
+                Swal.fire({ icon, title, text });
+            };
+
+            // SweetAlert2 確認彈窗
+            const showConfirm = (title, text, confirmCallback) => {
+                Swal.fire({
+                    title,
+                    text,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "確認",
+                    cancelButtonText: "取消",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        confirmCallback();
+                    }
+                });
+            };
+
+        });
+    </script>
+</body>
+
+</html>
